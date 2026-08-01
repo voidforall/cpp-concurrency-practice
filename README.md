@@ -28,7 +28,7 @@ ctest --test-dir build-tsan --output-on-failure
 ## Progress
 | Ch | Title | Part | Track | Done |
 |---:|-------|------|-------|:----:|
-| 1 | Hello, World of Concurrency in C++! | Part I | refresher | ☐ |
+| 1 | Hello, World of Concurrency in C++! | Part I | refresher | ✅ |
 | 2 | Managing Threads | Part I | refresher | ☐ |
 | 3 | Sharing Data Between Threads | Part II | refresher | ☐ |
 | 4 | Synchronizing Concurrent Operations | Part II | refresher | ☐ |
