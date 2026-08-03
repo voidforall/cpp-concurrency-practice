@@ -85,3 +85,27 @@ TEST(ThreadSafeStack, ConcurrentPopFromMultipleConsumersDrainsExactlyOnce) {
     EXPECT_EQ(popped_count.load(), total_items);
     EXPECT_TRUE(stack.empty());
 }
+
+TEST(LazySingletonCallOnce, ConcurrentCallersGetSameFullyConstructedInstance) {
+    constexpr int num_threads = 32;
+    std::vector<LazySingleton*> results(num_threads);
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads.emplace_back([&results, i] {
+            results[i] = &get_instance_call_once();
+        });
+    }
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    // Every caller must get the exact same instance...
+    for (int i = 0; i < num_threads; ++i) {
+        EXPECT_EQ(results[i], results[0]);
+    }
+    // ...and it must be fully constructed, never a half-built object -
+    // this is precisely the guarantee call_once gives that the naive
+    // double-checked-locking version does not.
+    EXPECT_EQ(results[0]->value(), 42);
+}
