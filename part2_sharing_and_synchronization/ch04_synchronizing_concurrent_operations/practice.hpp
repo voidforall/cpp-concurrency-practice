@@ -94,4 +94,53 @@ inline long long run_producer_consumer_pipeline_async(int count) {
     return consumed.get();  // blocks until the consumer stage is done
 }
 
+// Kata 2: fan out independent computations with std::async, gather results
+// with future::get(), and compare against a sequential baseline.
+
+// Moderately expensive, deterministic, embarrassingly-parallel: count primes
+// strictly less than `limit` via trial division. No shared state between
+// calls, so running several of these concurrently is safe by construction.
+inline long long count_primes_below(int limit) {
+    long long count = 0;
+    for (int n = 2; n < limit; ++n) {
+        bool is_prime = true;
+        for (int d = 2; d * d <= n; ++d) {
+            if (n % d == 0) {
+                is_prime = false;
+                break;
+            }
+        }
+        if (is_prime) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+inline std::vector<long long> count_primes_sequential(std::vector<int> const& limits) {
+    std::vector<long long> results;
+    results.reserve(limits.size());
+    for (int limit : limits) {
+        results.push_back(count_primes_below(limit));
+    }
+    return results;
+}
+
+inline std::vector<long long> count_primes_parallel_async(std::vector<int> const& limits) {
+    std::vector<std::future<long long>> futures;
+    futures.reserve(limits.size());
+    for (int limit : limits) {
+        // launch::async again: each task genuinely needs its own thread here,
+        // not a maybe-deferred one that would just re-serialize everything.
+        futures.push_back(std::async(std::launch::async, count_primes_below, limit));
+    }
+
+    std::vector<long long> results;
+    results.reserve(limits.size());
+    for (auto& f : futures) {
+        results.push_back(f.get());  // each get() only blocks as long as that task still needs
+    }
+    return results;
+}
+
 #endif // CH04_SYNCHRONIZING_CONCURRENT_OPERATIONS_PRACTICE_HPP
