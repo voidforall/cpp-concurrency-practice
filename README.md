@@ -32,7 +32,7 @@ ctest --test-dir build-tsan --output-on-failure
 | 2 | Managing Threads | Part I | refresher | ✅ |
 | 3 | Sharing Data Between Threads | Part II | refresher | ✅ |
 | 4 | Synchronizing Concurrent Operations | Part II | refresher | ✅ |
-| 5 | The C++ Memory Model and Operations on Atomic Types | Part III | full | ☐ |
+| 5 | The C++ Memory Model and Operations on Atomic Types | Part III | full | ✅ |
 | 6 | Designing Lock-Based Concurrent Data Structures | Part IV | full | ☐ |
 | 7 | Designing Lock-Free Concurrent Data Structures | Part IV | full | ☐ |
 | 8 | Designing Concurrent Code | Part IV | full | ☐ |
